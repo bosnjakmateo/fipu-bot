@@ -33,7 +33,7 @@ def users_empty():
 
 
 def item_notified(item):
-    return Items.objects(title=item.title) is not 0
+    return len(Items.objects(title=item.title)) is not 0
 
 
 def add_notified_item(item):
