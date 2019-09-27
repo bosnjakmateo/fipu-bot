@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from datetime import date
-from models import Item
+from models import Notification
 import requests
 import re
 
@@ -8,13 +8,6 @@ import re
 DATE_TAG = 'datetime'
 TITLE_CLASS = 'news_title_truncateable'
 LINK_START = 'fipu.unipu.hr'
-
-
-def format_small_date(current_date):
-    if current_date < 10:
-        return '0{}'.format(current_date)
-    else:
-        return '{}'.format(current_date)
 
 
 def get_items(link):
@@ -44,7 +37,13 @@ def get_items(link):
 
         if day != cur_day or month != cur_month:
             break
-
-        items.append(Item(title, '{}{}'.format(LINK_START, link)))
+        items.append(Notification(title, '{}{}'.format(LINK_START, link)))
 
     return items
+
+
+def format_small_date(current_date):
+    if current_date < 10:
+        return '0{}'.format(current_date)
+    else:
+        return '{}'.format(current_date)

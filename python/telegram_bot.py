@@ -1,9 +1,19 @@
 from telegram.ext import Updater, CommandHandler
-import database
+from database import users
+from data.messages import *
 import os
 
 updater = Updater(token=os.environ['TELEGRAM_TOKEN'], use_context=True)
 dispatcher = updater.dispatcher
+
+year_descriptions = {
+    0: "0 - sve obavijesti",
+    1: "1 - 1. preddiplomska",
+    2: "2 - 2. preddiplomska",
+    3: "3 - 3. preddiplomska",
+    4: "4 - 1. diplomska",
+    5: "5 - 2. diplomska"
+}
 
 
 def send_message(message, chat_id):
@@ -11,33 +21,71 @@ def send_message(message, chat_id):
 
 
 def send_welcome(update, context):
-    context.bot.send_message(update.message.chat_id,
-                             "Ja sam FIPU bot, poslat ću ti svaku novu obavijesti sa oglasne ploče.\n"
-                             "Pošalji '/register' za primanje obavijesti, ili '/unregister' da ih prestaneš dobivati")
+    context.bot.send_message(update.message.chat_id, START_MESSAGE)
 
 
 def register(update, context):
-    registered = database.add_user(update.message.chat.id)
+    registered = users.add_user(update.message.chat.id)
 
     if registered:
-        context.bot.send_message(chat_id=update.message.chat_id, text="Registracija uspješna!")
+        context.bot.send_message(chat_id=update.message.chat_id, text=REGISTER_SUCCESS)
     else:
-        context.bot.send_message(chat_id=update.message.chat_id, text="Već si registriran/a!")
+        context.bot.send_message(chat_id=update.message.chat_id, text=ALREADY_REGISTERED)
 
 
 def unregister(update, context):
-    removed = database.remove_user(update.message.chat.id)
+    removed = users.remove_user(update.message.chat.id)
 
     if removed:
-        context.bot.send_message(chat_id=update.message.chat_id, text="Nisi više registriran/a!")
+        context.bot.send_message(chat_id=update.message.chat_id, text=UNREGISTER_SUCCESS)
     else:
-        context.bot.send_message(chat_id=update.message.chat_id, text="Već si se odjavio/la od dobivanja obavijesti!")
+        context.bot.send_message(chat_id=update.message.chat_id, text=ALREADY_UNREGISTER)
+
+
+def update_year(update, context):
+    registered = users.add_user(update.message.chat.id)
+
+    if registered:
+        context.bot.send_message(chat_id=update.message.chat_id, text=NEED_TO_BE_REGISTERED)
+        return
+
+    try:
+        year = int(context.args[0])
+    except ValueError:
+        context.bot.send_message(chat_id=update.message.chat_id, text=UPDATE_YEAR_PARAMETER_INVALID)
+        return
+
+    if year > 5:
+        context.bot.send_message(chat_id=update.message.chat_id, text=UPDATE_YEAR_EXCEEDED)
+        return
+
+    users.update_year(update.message.chat.id, year)
+
+    context.bot.send_message(chat_id=update.message.chat_id, text=UPDATE_YEAR_SUCCESS.format(year_descriptions[year]))
+
+
+def get_all_commands(update, context):
+    context.bot.send_message(chat_id=update.message.chat_id, text=ALL_COMMANDS)
+
+
+def get_info(update, context):
+    registered = users.add_user(update.message.chat.id)
+
+    if registered:
+        context.bot.send_message(chat_id=update.message.chat_id, text=NEED_TO_BE_REGISTERED)
+        return
+
+    user = users.get_user(update.message.chat.id)
+
+    context.bot.send_message(chat_id=update.message.chat_id, text=INFO.format(year_descriptions[int(user.year)]))
 
 
 dispatcher.add_handler(CommandHandler('start', send_welcome))
-dispatcher.add_handler(CommandHandler('help', send_welcome))
-dispatcher.add_handler(CommandHandler('register', register))
-dispatcher.add_handler(CommandHandler('unregister', unregister))
+dispatcher.add_handler(CommandHandler('registracija', register))
+dispatcher.add_handler(CommandHandler('odjava', unregister))
+dispatcher.add_handler(CommandHandler('godina', update_year, pass_args=True))
+dispatcher.add_handler(CommandHandler('info', get_info))
+dispatcher.add_handler(CommandHandler('pomoc', get_all_commands))
 
 
 def start_bot():
