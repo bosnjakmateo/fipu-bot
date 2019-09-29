@@ -1,5 +1,5 @@
 from telegram.ext import Updater, CommandHandler
-from database import users
+from database import users_db
 from data.messages import *
 import os
 
@@ -25,7 +25,7 @@ def send_welcome(update, context):
 
 
 def register(update, context):
-    registered = users.add_user(update.message.chat.id)
+    registered = users_db.add_user(update.message.chat.id)
 
     if registered:
         context.bot.send_message(chat_id=update.message.chat_id, text=REGISTER_SUCCESS)
@@ -34,7 +34,7 @@ def register(update, context):
 
 
 def unregister(update, context):
-    removed = users.remove_user(update.message.chat.id)
+    removed = users_db.remove_user(update.message.chat.id)
 
     if removed:
         context.bot.send_message(chat_id=update.message.chat_id, text=UNREGISTER_SUCCESS)
@@ -43,7 +43,7 @@ def unregister(update, context):
 
 
 def update_year(update, context):
-    registered = users.add_user(update.message.chat.id)
+    registered = users_db.add_user(update.message.chat.id)
 
     if registered:
         context.bot.send_message(chat_id=update.message.chat_id, text=NEED_TO_BE_REGISTERED)
@@ -59,7 +59,7 @@ def update_year(update, context):
         context.bot.send_message(chat_id=update.message.chat_id, text=UPDATE_YEAR_EXCEEDED)
         return
 
-    users.update_year(update.message.chat.id, year)
+    users_db.update_year(update.message.chat.id, year)
 
     context.bot.send_message(chat_id=update.message.chat_id, text=UPDATE_YEAR_SUCCESS.format(year_descriptions[year]))
 
@@ -69,15 +69,15 @@ def get_all_commands(update, context):
 
 
 def get_info(update, context):
-    registered = users.add_user(update.message.chat.id)
+    registered = users_db.user_registered(update.message.chat.id)
 
-    if registered:
+    if not registered:
         context.bot.send_message(chat_id=update.message.chat_id, text=NEED_TO_BE_REGISTERED)
         return
 
-    user = users.get_user(update.message.chat.id)
+    user = users_db.get_user(update.message.chat.id)
 
-    context.bot.send_message(chat_id=update.message.chat_id, text=INFO.format(year_descriptions[int(user.year)]))
+    context.bot.send_message(chat_id=update.message.chat_id, text=INFO.format(year_descriptions[int(user['year'])]))
 
 
 dispatcher.add_handler(CommandHandler('start', send_welcome))
