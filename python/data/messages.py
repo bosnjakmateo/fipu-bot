@@ -12,9 +12,9 @@ ALREADY_UNREGISTER = "Već si se odjavio/la od dobivanja obavijesti!"
 
 UPDATE_YEAR_PARAMETER_INVALID = "Krivi format. Očekivani format '/godina 'N', gdje je 'N' broj godine"
 UPDATE_YEAR_EXCEEDED = "Najveća godina studija je pet (5)"
-UPDATE_YEAR_SUCCESS = "Godina uspješno ažurirana.\nTrenutno odabrana godina je: {}"
+UPDATE_YEAR_SUCCESS = "Godina uspješno ažurirana.\nTrenutno odabrana godina je:\n{}"
 
-INFO = "Trenutnao odabrana godina: {}"
+INFO = "Trenutna odabrana godina:\n{}"
 
 NEED_TO_BE_REGISTERED = "Moraš se prvo registrirati!"
 
