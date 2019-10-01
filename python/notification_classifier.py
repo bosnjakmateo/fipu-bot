@@ -28,6 +28,7 @@ def load_data():
 
 
 def get_subjects(link, diplomski):
+    global classified_subjects
     items = subject_scraper.get_items(link)
 
     semester = ''
