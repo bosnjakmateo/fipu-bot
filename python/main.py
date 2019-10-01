@@ -21,8 +21,12 @@ def filter_notified_items(items):
 
 
 def format_content(items):
-    formatted_items = map(lambda item: '[{}]({})'.format(item.title, item.link), items)
+    formatted_items = map(lambda item: '[{}]({})'.format(remove_brackets(item.title), item.link), items)
     return '\n'.join(formatted_items)
+
+
+def remove_brackets(title):
+    return title.replace('[', '').replace(']', '')
 
 
 def job():
@@ -43,7 +47,7 @@ def job():
             continue
 
         content = format_content(users_items)
-        telegram_bot.send_message("Nove obavijesti:\n{}".format(content), user['chat_id'])
+        telegram_bot.send_message("Nove obavijesti:\n{}".format(content), int(user['chat_id']))
 
 
 def get_items(classified_items, year):

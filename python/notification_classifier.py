@@ -34,7 +34,7 @@ def get_subjects(link, diplomski):
     semester = ''
 
     for item in items:
-        if 'semestar' in item:
+        if 'semestar'.lower() in item.lower():
             semester = item
             continue
 
