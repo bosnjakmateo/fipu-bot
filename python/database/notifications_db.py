@@ -1,6 +1,7 @@
 import os
 
 from pymongo import MongoClient
+from logger import *
 
 client = MongoClient(host=os.environ['MONGO_URL'])
 notifications = client['fipu-bot']['notifications']
@@ -15,4 +16,6 @@ def add_notified_item(item):
 
 
 def clean_notified_items():
+    logger.info("Starting to clean notified notifications")
     notifications.delete_many({})
+    logger.info("Notified notifications cleaned successfully")

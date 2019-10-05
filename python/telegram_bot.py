@@ -1,6 +1,7 @@
 from telegram.ext import Updater, CommandHandler
 from database import users_db
 from data.messages import *
+from logger import *
 import os
 
 updater = Updater(token=os.environ['TELEGRAM_TOKEN'], use_context=True)
@@ -17,7 +18,7 @@ year_descriptions = {
 
 
 def send_message(message, chat_id):
-    dispatcher.bot.send_message(parse_mode='Markdown', chat_id=chat_id, text=message, disable_web_page_preview=True)
+    dispatcher.bot.send_message(parse_mode='Markdown', chat_id=int(chat_id), text=message, disable_web_page_preview=True)
 
 
 def send_welcome(update, context):
@@ -90,3 +91,4 @@ dispatcher.add_handler(CommandHandler('pomoc', get_all_commands))
 
 def start_bot():
     updater.start_polling()
+    logger.info("Bot polling started")

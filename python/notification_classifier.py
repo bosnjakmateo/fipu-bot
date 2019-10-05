@@ -1,5 +1,6 @@
-from models import Subject
+from data.models import Subject
 from scraper import subject_scraper
+from logger import *
 import re
 
 
@@ -11,20 +12,26 @@ classified_subjects = []
 
 def classify_items(items):
     classified_items = {0: [], 1: [], 2: [], 3: [], 4: [], 5: []}
+    logger.info("Classifying notifications {}".format(items))
 
     for item in items:
         year = get_year(item)
         classified_items[year].append(item)
 
+    logger.info("Classified notifications {}".format(classified_items))
     return classified_items
 
 
 def load_data():
+    logger.info("Starting subject loading")
+
     global classified_subjects
     classified_subjects = []
 
     get_subjects(PREDDIPLOMSKI, False)
     get_subjects(DIPLOMSKI, True)
+
+    logger.info("Subject loading finished")
 
 
 def get_subjects(link, diplomski):

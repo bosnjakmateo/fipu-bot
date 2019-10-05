@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from datetime import date
-from models import Notification
+from data.models import Notification
+from logger import *
 import requests
 import re
 
@@ -11,6 +12,8 @@ LINK_START = 'fipu.unipu.hr'
 
 
 def get_items(link):
+    logger.info("Scrapping notifications")
+
     page = requests.get(link)
     soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -39,6 +42,7 @@ def get_items(link):
             break
         items.append(Notification(title, '{}{}'.format(LINK_START, link)))
 
+    logger.info("Scraped {} notifications {}".format(len(items), items))
     return items
 
 
