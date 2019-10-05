@@ -1,12 +1,13 @@
+import threading
 import time
 
 import schedule
 
 import notification_classifier
 import telegram_bot
-from logger import *
 from database import notifications_db
 from database import users_db
+from logger import *
 from scraper import notification_scraper
 
 
@@ -83,15 +84,18 @@ def get_items(classified_items, year):
         return items + classified_items[year]
 
 
-telegram_bot.start_bot()
+def main():
+    schedule.every().hour.at(":00").do(job)
+    schedule.every().hour.at(":30").do(job)
+    schedule.every().day.at("02:00").do(notifications_db.clean_notified_items)
+
+    logger.info("Service started")
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
 notification_classifier.load_data()
-
-schedule.every().hour.at(":00").do(job)
-schedule.every().hour.at(":30").do(job)
-schedule.every().day.at("02:00").do(notifications_db.clean_notified_items)
-
-logger.info("Service started")
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+threading.Thread(target=main, daemon=True).start()
+telegram_bot.start_bot()

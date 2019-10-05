@@ -92,3 +92,4 @@ dispatcher.add_handler(CommandHandler('pomoc', get_all_commands))
 def start_bot():
     updater.start_polling()
     logger.info("Bot polling started")
+    updater.idle()
