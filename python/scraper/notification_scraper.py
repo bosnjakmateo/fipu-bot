@@ -1,17 +1,18 @@
-from bs4 import BeautifulSoup
-from datetime import date
-from data.models import Notification
-from logger import *
-import requests
 import re
+from datetime import date
 
+import requests
+from bs4 import BeautifulSoup
+
+from config.logger import logger
+from data.models import Notification
 
 DATE_TAG = 'datetime'
 TITLE_CLASS = 'news_title_truncateable'
 LINK_START = 'fipu.unipu.hr'
 
 
-def get_items(link):
+def get_all(link):
     logger.info("Scrapping notifications")
 
     page = requests.get(link)
@@ -26,7 +27,7 @@ def get_items(link):
         if index % 2 is 0:
             dates.append(item)
 
-    items = []
+    notifications = []
 
     cur_month = format_small_date(date.today().month)
     cur_day = format_small_date(date.today().day)
@@ -40,10 +41,10 @@ def get_items(link):
 
         if day != cur_day or month != cur_month:
             break
-        items.append(Notification(title, '{}{}'.format(LINK_START, link)))
+        notifications.append(Notification(title, '{}{}'.format(LINK_START, link)))
 
-    logger.info("Scraped {} notifications {}".format(len(items), items))
-    return items
+    logger.info("Scraped {} notifications: {}".format(len(notifications), notifications))
+    return notifications
 
 
 def format_small_date(current_date):

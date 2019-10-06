@@ -2,33 +2,36 @@ import os
 
 from pymongo import MongoClient
 
+from data.models import User
+
 client = MongoClient(host=os.environ['MONGO_URL'])
 users_collection = client['fipu-bot']['users']
 
 
-def add_user(chat_id):
+def add(chat_id):
     if user_registered(chat_id):
         return False
 
     return users_collection.insert_one({'chat_id': chat_id, 'year': 0})
 
 
-def get_user(chat_id):
-    return users_collection.find_one({'chat_id': chat_id})
+def get(chat_id):
+    user = users_collection.find_one({'chat_id': chat_id})
+    return User(user['chat_id'], user['year'])
 
 
-def get_users():
+def get_all():
     users = []
 
     cursor = users_collection.find({})
 
     for document in cursor:
-        users.append(document)
+        users.append(User(document['chat_id'], document['year']))
 
     return users
 
 
-def remove_user(chat_id):
+def remove(chat_id):
     if not user_registered(chat_id):
         return False
 

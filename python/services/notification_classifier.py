@@ -1,8 +1,8 @@
-from data.models import Subject
-from scraper import subject_scraper
-from logger import *
 import re
 
+from config.logger import *
+from data.models import Subject
+from scraper import subject_scraper
 
 PREDDIPLOMSKI = 'https://fipu.unipu.hr/fipu/studijski_programi/preddiplomski_sveucilisni_studij_informatika'
 DIPLOMSKI = 'https://fipu.unipu.hr/fipu/studijski_programi/preddiplomski_sveucilisni_studij_informatika'
@@ -10,16 +10,16 @@ DIPLOMSKI = 'https://fipu.unipu.hr/fipu/studijski_programi/preddiplomski_sveucil
 classified_subjects = []
 
 
-def classify_items(items):
-    classified_items = {0: [], 1: [], 2: [], 3: [], 4: [], 5: []}
-    logger.info("Classifying notifications {}".format(items))
+def classify(notifications):
+    classified_notifications = {0: [], 1: [], 2: [], 3: [], 4: [], 5: []}
+    logger.info("Classifying notifications {}".format(notifications))
 
-    for item in items:
-        year = get_year(item)
-        classified_items[year].append(item)
+    for notification in notifications:
+        year = get_year(notification)
+        classified_notifications[year].append(notification)
 
-    logger.info("Classified notifications {}".format(classified_items))
-    return classified_items
+    logger.info("Classified notifications {}".format(classified_notifications))
+    return classified_notifications
 
 
 def load_data():
@@ -34,9 +34,9 @@ def load_data():
     logger.info("Subject loading finished")
 
 
-def get_subjects(link, diplomski):
+def get_subjects(link, graduate):
     global classified_subjects
-    items = subject_scraper.get_items(link)
+    items = subject_scraper.get_all(link)
 
     semester = ''
 
@@ -45,7 +45,7 @@ def get_subjects(link, diplomski):
             semester = item
             continue
 
-        classified_subjects.append(Subject(item, extract_year(semester, diplomski)))
+        classified_subjects.append(Subject(item, extract_year(semester, graduate)))
 
 
 def get_year(item):
@@ -56,11 +56,11 @@ def get_year(item):
     return 0
 
 
-def extract_year(semester, diplomski):
+def extract_year(semester, graduate):
     year = re.findall(''', \d''', semester)
     year = int(year[0][-1:])
 
-    if diplomski:
+    if graduate:
         year = year + 3
 
     return year

@@ -1,9 +1,10 @@
-from bs4 import BeautifulSoup
-import requests
 import re
 
+import requests
+from bs4 import BeautifulSoup
 
-def get_items(link):
+
+def get_all(link):
     page = requests.get(link)
     soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -45,17 +46,16 @@ def replace_roman_numerals(items):
     return clean_items
 
 
-def remove_redundancies(subjects):
-    indices = [i for i, x in enumerate(subjects) if x == subjects[0]]
+def remove_redundancies(items):
+    indices = [i for i, x in enumerate(items) if x == items[0]]
 
     if len(indices) > 1:
-        return subjects[0:indices[1]]
+        return items[0:indices[1]]
     else:
-        return subjects
+        return items
 
 
 def remove_html_tags(text):
     import re
     clean = re.compile('<.*?>')
     return re.sub(clean, '', text).strip()
-
