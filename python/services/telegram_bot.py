@@ -5,6 +5,7 @@ from telegram.ext import Updater, CommandHandler
 from config.logger import *
 from config.messages import *
 from database import users_db
+from services import schedule_downloader
 
 updater = Updater(token=os.environ['TELEGRAM_TOKEN'], use_context=True)
 dispatcher = updater.dispatcher
@@ -68,6 +69,15 @@ def update_year(update, context):
     context.bot.send_message(chat_id=update.message.chat_id, text=UPDATE_YEAR_SUCCESS.format(year_descriptions[year]))
 
 
+def get_schedule(update, context):
+    schedule_photo = schedule_downloader.get_schedule(context.args[0])
+
+    if not schedule_photo:
+        context.bot.send_message(chat_id=update.message.chat_id, text=GET_SCHEDULE_FAIL)
+
+    context.bot.send_photo(chat_id=update.message.chat_id, photo=schedule_photo)
+
+
 def get_all_commands(update, context):
     context.bot.send_message(chat_id=update.message.chat_id, text=ALL_COMMANDS)
 
@@ -88,6 +98,7 @@ dispatcher.add_handler(CommandHandler('start', send_welcome))
 dispatcher.add_handler(CommandHandler('registracija', register))
 dispatcher.add_handler(CommandHandler('odjava', unregister))
 dispatcher.add_handler(CommandHandler('godina', update_year, pass_args=True))
+dispatcher.add_handler(CommandHandler('raspored', get_schedule, pass_args=True))
 dispatcher.add_handler(CommandHandler('info', get_info))
 dispatcher.add_handler(CommandHandler('pomoc', get_all_commands))
 
