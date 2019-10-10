@@ -23,8 +23,8 @@ NEED_TO_BE_REGISTERED = "Moraš se prvo registrirati!"
 ALL_COMMANDS = "/start - početna poruka" \
                "\n/registracija - registracija na notifikacije" \
                "\n/odjava - odjava sa notifikacija" \
-               "\n/godina N - filtiranje notifikacija po godini\n(0 = sve obavijesti, godine = 1-5)" \
-               "\n/raspored S (pr. /raspored p1) - raspored nastave, gdje je:" \
-               "\np - preddiplomski\nd - diplomski\ndn - diplomski nastavni" \
+               "\n/godina {$} - filtiranje notifikacija po godini\n(0 = sve obavijesti, godine = 1-5)" \
+               "\n/raspored {$} (pr. /raspored p1, preddiplomski 1. semestar)" \
+               "\np - preddiplomski\nd - diplomski\ndn - diplomski nastavni\n[1-6] - semestar" \
                "\n/info - tvoje informacije" \
                "\n/pomoc - popis svih naredbi"
