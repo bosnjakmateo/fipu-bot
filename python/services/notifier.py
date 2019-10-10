@@ -22,8 +22,6 @@ def main():
 
 
 def job():
-    logger.info("Job started")
-
     if users_db.users_empty():
         logger.info("No users in db")
         return

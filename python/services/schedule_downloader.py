@@ -26,7 +26,13 @@ BASE_LINK = 'https://fipu.unipu.hr/_download/repository/'
 
 
 def get_schedule(semester):
-    url = '{}{}'.format(BASE_LINK, schedules_map[semester])
+    try:
+        schedule_name = schedules_map[semester]
+    except KeyError:
+        logger.error("Invalid key for schedule")
+        return {}
+
+    url = '{}{}'.format(BASE_LINK, schedule_name)
     r = requests.get(url, stream=True)
 
     try:
@@ -35,7 +41,7 @@ def get_schedule(semester):
 
         for image in images:
             image.save(bio, "png")
-            bio.seek(0)
+        bio.seek(0)
 
         return bio
 

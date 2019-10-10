@@ -74,6 +74,7 @@ def get_schedule(update, context):
 
     if not schedule_photo:
         context.bot.send_message(chat_id=update.message.chat_id, text=GET_SCHEDULE_FAIL)
+        return
 
     context.bot.send_photo(chat_id=update.message.chat_id, photo=schedule_photo)
 
